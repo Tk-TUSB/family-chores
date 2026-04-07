@@ -919,7 +919,11 @@ window.addEventListener('load', function() {
   var sk=localStorage.getItem('sb_key');
   if(su)SUPABASE_URL=su;
   if(sk)SUPABASE_KEY=sk;
-
+window.onerror = function(msg, src, line) {
+  document.getElementById('loading').innerHTML =
+    '<div style="padding:20px;font-size:13px;color:#791F1F">' +
+    'エラー: ' + msg + '<br>行: ' + line + '</div>';
+};
   var ready=function(){
     document.getElementById('loading').style.display='none';
     document.getElementById('app').style.display='block';
