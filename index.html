@@ -81,8 +81,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sa
 .mgh{background:var(--sf2)!important;font-weight:600;font-size:10px;color:var(--tx2)}
 .mgl{background:var(--sf2)!important;align-items:flex-start!important;padding:4px 6px!important;font-size:10px;color:var(--tx2)}
 .mgb{width:26px;height:18px;border-radius:4px;border:var(--bd);font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:600;background:var(--sf2);color:var(--tx3)}
-.mgb.need{background:var(--cgb);color:var(--cg);border-color:#5DCAA5}
-.mgb.skip{background:var(--crb);color:var(--cr);border-color:#F09595}
+.mgb.need{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.mgb.skip{background:#FCEBEB;color:#791F1F;border-color:#F09595}
 .itabs{display:flex;border-bottom:var(--bd);margin-bottom:10px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .itab{padding:6px 12px;font-size:12px;cursor:pointer;border:none;background:none;color:var(--tx2);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;font-weight:500}
 .itab.on{color:var(--tx);border-bottom-color:var(--tx);font-weight:600}
@@ -121,13 +121,13 @@ input:focus,select:focus{outline:none;border-color:var(--cp)}
 .co{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;display:inline-block;margin-right:6px}
 .list-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:var(--bd)}
 .list-row:last-child{border-bottom:none}
-.dow-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.dow-lbl{display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer}
-.dow-lbl input{width:18px;height:18px;flex-shrink:0}
-.pri-chip{font-size:12px;padding:4px 10px;border-radius:99px;cursor:pointer;border:var(--bde);background:var(--sf2);color:var(--tx2);user-select:none;display:inline-block}
-.pri-chip.on{font-weight:600}
+/* 曜日チェックボックス */
+.dow-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px}
+.dow-btn{height:36px;border:var(--bde);border-radius:var(--rs);font-size:13px;cursor:pointer;background:var(--sf2);color:var(--tx2);font-weight:500;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none}
+.dow-btn.on{background:var(--cp);color:#fff;border-color:var(--cp)}
+/* トグル */
 .toggle-sw{position:relative;width:44px;height:24px;flex-shrink:0}
-.toggle-sw input{opacity:0;width:0;height:0}
+.toggle-sw input{opacity:0;width:0;height:0;position:absolute}
 .toggle-sl{position:absolute;inset:0;background:#ccc;border-radius:12px;cursor:pointer;transition:.2s}
 .toggle-sl:before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
 .toggle-sw input:checked+.toggle-sl{background:var(--cp)}
@@ -184,21 +184,21 @@ input:focus,select:focus{outline:none;border-color:var(--cp)}
       <button class="btn btn-p btn-sm" id="savbtn" onclick="saveAv()">保存</button>
     </div>
   </div>
-  <p style="font-size:11px;color:var(--tx2)">「なんでも対応」は全家事の空き候補になります</p>
+  <p style="font-size:11px;color:var(--tx2)">「なんでも対応」タブは通知設定からオン/オフできます</p>
 </div>
 
 <div id="notify" class="sec">
   <div class="card">
     <div class="card-title">人手不足アラート</div>
     <div class="srow"><div class="slbl">通知を有効にする<div class="sdesc">人手不足の家事を事前通知</div></div>
-      <label class="toggle-sw"><input type="checkbox" id="nt-enabled" checked onchange="saveNS()"><span class="toggle-sl"></span></label></div>
+      <label class="toggle-sw"><input type="checkbox" id="nt-enabled" onchange="saveNS()"><span class="toggle-sl"></span></label></div>
     <div class="srow"><div class="slbl">通知タイミング<div class="sdesc">何日前に通知するか</div></div>
       <div style="display:flex;align-items:center;gap:6px"><input type="number" id="nt-days" value="3" min="1" max="14" onchange="saveNS()" style="width:70px"><span style="font-size:13px;color:var(--tx2)">日前</span></div></div>
     <div class="srow"><div class="slbl">通知時刻</div><input type="time" id="nt-time" value="08:00" onchange="saveNS()" style="width:130px"></div>
     <div class="srow"><div class="slbl">週次サマリー<div class="sdesc">毎週この曜日に担当一覧を通知</div></div>
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-        <label class="toggle-sw"><input type="checkbox" id="nt-weekly" checked onchange="saveNS()"><span class="toggle-sl"></span></label>
-        <select id="nt-wday" onchange="saveNS()" style="width:80px;height:34px"><option value="0">日曜</option><option value="1" selected>月曜</option><option value="2">火曜</option><option value="3">水曜</option><option value="4">木曜</option><option value="5">金曜</option><option value="6">土曜</option></select>
+        <label class="toggle-sw"><input type="checkbox" id="nt-weekly" onchange="saveNS()"><span class="toggle-sl"></span></label>
+        <select id="nt-wday" onchange="saveNS()" style="width:80px;height:34px"><option value="0">日曜</option><option value="1">月曜</option><option value="2">火曜</option><option value="3">水曜</option><option value="4">木曜</option><option value="5">金曜</option><option value="6">土曜</option></select>
         <input type="time" id="nt-wtime" value="07:00" onchange="saveNS()" style="width:130px">
       </div></div>
     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
@@ -210,11 +210,21 @@ input:focus,select:focus{outline:none;border-color:var(--cp)}
   </div>
 
   <div class="card">
-    <div class="card-title">食事の未定を自動で「必要」にする</div>
-    <div class="srow"><div class="slbl">当日早朝に自動確定<div class="sdesc">未定のまま当日になった食事を自動で「必要」にする</div></div>
+    <div class="card-title">食事設定</div>
+    <div class="srow"><div class="slbl">昼食を表示<div class="sdesc">食事管理・カレンダーに昼食を表示する</div></div>
+      <label class="toggle-sw"><input type="checkbox" id="meal-show-lunch" onchange="saveNS();renderMeal();renderCal()"><span class="toggle-sl"></span></label></div>
+    <div class="srow"><div class="slbl">夕食を表示<div class="sdesc">食事管理・カレンダーに夕食を表示する</div></div>
+      <label class="toggle-sw"><input type="checkbox" id="meal-show-dinner" onchange="saveNS();renderMeal();renderCal()"><span class="toggle-sl"></span></label></div>
+    <div class="srow"><div class="slbl">未定を当日自動で「必要」にする<div class="sdesc">設定した時刻に未定を自動確定</div></div>
       <label class="toggle-sw"><input type="checkbox" id="meal-auto" onchange="saveNS()"><span class="toggle-sl"></span></label></div>
-    <div class="srow"><div class="slbl">自動確定の時刻<div class="sdesc">この時刻に未定を「必要」に変更</div></div>
+    <div class="srow"><div class="slbl">自動確定の時刻</div>
       <input type="time" id="meal-auto-time" value="06:00" onchange="saveNS()" style="width:130px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">空き日登録の設定</div>
+    <div class="srow"><div class="slbl">「なんでも対応」タブを表示<div class="sdesc">オフにすると家事ごとのタブのみ表示</div></div>
+      <label class="toggle-sw"><input type="checkbox" id="avail-show-any" onchange="saveNS();renderAvail()"><span class="toggle-sl"></span></label></div>
   </div>
 
   <div class="card">
@@ -233,7 +243,7 @@ input:focus,select:focus{outline:none;border-color:var(--cp)}
         <select id="ic-mbr" style="flex:1;min-width:120px;height:34px"></select>
         <button class="btn btn-p btn-sm" onclick="downloadIcs()">ダウンロード</button>
       </div>
-      <div id="ic-dl-msg" style="margin-top:6px;font-size:12px;color:var(--tx2)"></div>
+      <div id="ic-dl-msg" style="margin-top:6px;font-size:12px"></div>
     </div>
   </div>
 </div>
@@ -297,14 +307,14 @@ input:focus,select:focus{outline:none;border-color:var(--cp)}
   </div>
   <div class="fg" id="dow-wrap" style="display:none">
     <label>実施する曜日（複数選択可）</label>
-    <div class="dow-wrap">
-      <label class="dow-lbl"><input type="checkbox" class="dow-chk" value="0">日</label>
-      <label class="dow-lbl"><input type="checkbox" class="dow-chk" value="1">月</label>
-      <label class="dow-lbl"><input type="checkbox" class="dow-chk" value="2">火</label>
-      <label class="dow-lbl"><input type="checkbox" class="dow-chk" value="3">水</label>
-      <label class="dow-lbl"><input type="checkbox" class="dow-chk" value="4">木</label>
-      <label class="dow-lbl"><input type="checkbox" class="dow-chk" value="5">金</label>
-      <label class="dow-lbl"><input type="checkbox" class="dow-chk" value="6">土</label>
+    <div class="dow-grid">
+      <div class="dow-btn" data-dow="0" onclick="tgDow(0,this)">日</div>
+      <div class="dow-btn" data-dow="1" onclick="tgDow(1,this)">月</div>
+      <div class="dow-btn" data-dow="2" onclick="tgDow(2,this)">火</div>
+      <div class="dow-btn" data-dow="3" onclick="tgDow(3,this)">水</div>
+      <div class="dow-btn" data-dow="4" onclick="tgDow(4,this)">木</div>
+      <div class="dow-btn" data-dow="5" onclick="tgDow(5,this)">金</div>
+      <div class="dow-btn" data-dow="6" onclick="tgDow(6,this)">土</div>
     </div>
   </div>
   <div class="fg"><label>必要人数</label><input id="cneed" type="number" min="1" max="5" value="1" style="width:80px"></div>
@@ -318,7 +328,7 @@ input:focus,select:focus{outline:none;border-color:var(--cp)}
   </div>
   <div class="fg">
     <label>開始時刻通知</label>
-    <div style="display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
       <label class="toggle-sw"><input type="checkbox" id="ch-notify" onchange="toggleChNotify()"><span class="toggle-sl"></span></label>
       <span style="font-size:12px;color:var(--tx2)">時間になったら担当者に通知</span>
     </div>
@@ -385,18 +395,19 @@ input:focus,select:focus{outline:none;border-color:var(--cp)}
 </nav>
 
 <script>
-var SUPABASE_URL = 'https://yccqdioijadckshwzaiu.supabase.co';
-var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljY3FkaW9pamFkY2tzaHd6YWl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Mjk2MDQsImV4cCI6MjA5MTEwNTYwNH0.w3HGc3lKMpCvK5HqUquAMJMMk4Zs0GqGVG68_8F0Bm0';
+var SUPABASE_URL='https://yccqdioijadckshwzaiu.supabase.co';
+var SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljY3FkaW9pamFkY2tzaHd6YWl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1Mjk2MDQsImV4cCI6MjA5MTEwNTYwNH0.w3HGc3lKMpCvK5HqUquAMJMMk4Zs0GqGVG68_8F0Bm0';
 
 var CL={purple:{bg:'#EEEDFE',tx:'#3C3489',md:'#534AB7'},teal:{bg:'#E1F5EE',tx:'#085041',md:'#0F6E56'},coral:{bg:'#FAECE7',tx:'#993C1D',md:'#D85A30'},blue:{bg:'#E6F1FB',tx:'#0C447C',md:'#185FA5'},pink:{bg:'#FBEAF0',tx:'#72243E',md:'#D4537E'},amber:{bg:'#FAEEDA',tx:'#633806',md:'#BA7517'},gray:{bg:'#F1EFE8',tx:'#444441',md:'#888780'}};
-var MEALS=['朝食','昼食','夕食'];
-var MEAL_LABELS=['朝','昼','夜'];
+var ALL_MEALS=['昼食','夕食'];
+var ALL_MEAL_LABELS=['昼','夜'];
 var DOW=['日','月','火','水','木','金','土'];
 var ANY='__any__';
 var MSTATES=['undecided','skip','need'];
 var now=new Date();
 var sb=null;
 var choreTimers=[];
+var selDays=[];
 
 var D={
   mbrs:[{id:'m1',name:'お父さん',color:'blue'},{id:'m2',name:'お母さん',color:'pink'},{id:'m3',name:'太郎',color:'teal'}],
@@ -410,10 +421,21 @@ var D={
   ay:now.getFullYear(),amo:now.getMonth(),
   avTab:ANY,mws:mstart(now),
   curDay:null,manSel:{},selCol:'purple',selFix:[],selPri:[],
-  ns:{enabled:true,days:3,time:'08:00',weekly:true,wday:1,wtime:'07:00',
-      icStart:'07:00',icEnd:'08:00',icRemind:30,
-      mealAuto:false,mealAutoTime:'06:00'}
+  ns:{
+    enabled:false,days:3,time:'08:00',weekly:false,wday:1,wtime:'07:00',
+    icStart:'07:00',icEnd:'08:00',icRemind:30,
+    mealAuto:false,mealAutoTime:'06:00',
+    mealShowLunch:true,mealShowDinner:true,
+    availShowAny:true
+  }
 };
+
+function activeMeals(){
+  var r=[];
+  if(D.ns.mealShowLunch)r.push({name:'昼食',label:'昼'});
+  if(D.ns.mealShowDinner)r.push({name:'夕食',label:'夜'});
+  return r;
+}
 
 function mstart(d){var r=new Date(d);var dw=r.getDay();r.setDate(r.getDate()+(dw===0?-6:1-dw));r.setHours(0,0,0,0);return r;}
 function dky(y,m,d){return y+'-'+('0'+(m+1)).slice(-2)+'-'+('0'+d).slice(-2)}
@@ -453,14 +475,10 @@ function loadAll(){
     if(res[0].data&&res[0].data.length)D.mbrs=res[0].data;
     if(res[1].data&&res[1].data.length){
       D.chrs=res[1].data.map(function(c){
-        return {
-          id:c.id,name:c.name,freq:c.freq,need:c.need,color:c.color,
-          fixed:c.fixed_members||[],
-          priority:c.priority_members||[],
+        return {id:c.id,name:c.name,freq:c.freq,need:c.need,color:c.color,
+          fixed:c.fixed_members||[],priority:c.priority_members||[],
           active_days:c.active_days||[0,1,2,3,4,5,6],
-          start_time:c.start_time||'',
-          notify_enabled:c.notify_enabled||false
-        };
+          start_time:c.start_time||'',notify_enabled:c.notify_enabled||false};
       });
     }
     D.avail={};(res[2].data||[]).forEach(function(r){D.avail[r.avail_key]=r.dates||[];});
@@ -475,12 +493,14 @@ function syncChore(ch){
   if(!sb)return Promise.resolve();
   return sb.from('chores').upsert({
     id:ch.id,name:ch.name,freq:ch.freq,need:ch.need,color:ch.color,
-    fixed_members:ch.fixed||[],
-    priority_members:ch.priority||[],
+    fixed_members:ch.fixed||[],priority_members:ch.priority||[],
     active_days:ch.active_days||[0,1,2,3,4,5,6],
-    start_time:ch.start_time||'',
-    notify_enabled:ch.notify_enabled||false
+    start_time:ch.start_time||'',notify_enabled:ch.notify_enabled||false
   });
+}
+function deleteChoreDB(id){
+  if(!sb)return Promise.resolve();
+  return sb.from('chores').delete().eq('id',id);
 }
 function syncAvail(){
   if(!sb)return Promise.resolve();
@@ -500,7 +520,6 @@ function syncMeal(mid,ds,ml,state){
   return sb.from('meals').upsert({meal_key:mkey(mid,ds,ml),member_id:mid,date:ds,meal_name:ml,state:state});
 }
 function delMemberDB(id){if(sb)sb.from('members').delete().eq('id',id);}
-function delChoreDB(id){if(sb)sb.from('chores').delete().eq('id',id);}
 
 function saveLocal(){
   try{localStorage.setItem('fc_d',JSON.stringify({mbrs:D.mbrs,chrs:D.chrs,avail:D.avail,asgn:D.asgn,meals:D.meals,ns:D.ns}));}catch(e){}
@@ -509,7 +528,7 @@ function loadLocal(){
   try{var s=localStorage.getItem('fc_d');if(s){var d=JSON.parse(s);
     if(d.mbrs)D.mbrs=d.mbrs;if(d.chrs)D.chrs=d.chrs;
     if(d.avail)D.avail=d.avail;if(d.asgn)D.asgn=d.asgn;
-    if(d.meals)D.meals=d.meals;if(d.ns)D.ns=Object.assign(D.ns,d.ns);
+    if(d.meals)D.meals=d.meals;if(d.ns)D.ns=Object.assign({},D.ns,d.ns);
   }}catch(e){}
 }
 
@@ -543,6 +562,9 @@ function loadNSForm(){
   document.getElementById('ic-remind').value=D.ns.icRemind;
   document.getElementById('meal-auto').checked=D.ns.mealAuto;
   document.getElementById('meal-auto-time').value=D.ns.mealAutoTime;
+  document.getElementById('meal-show-lunch').checked=D.ns.mealShowLunch;
+  document.getElementById('meal-show-dinner').checked=D.ns.mealShowDinner;
+  document.getElementById('avail-show-any').checked=D.ns.availShowAny;
 }
 
 function renderAll(){renderCal();renderMeal();}
@@ -573,22 +595,18 @@ function autoA(){
       if(!isCD(ch,y,m,d))return;
       if(ch.fixed&&ch.fixed.length){
         D.asgn[k][ch.id]=ch.fixed.slice();
-        ch.fixed.forEach(function(id){cnt[id]=(cnt[id]||0)+1;});
-        return;
+        ch.fixed.forEach(function(id){cnt[id]=(cnt[id]||0)+1;});return;
       }
       var av=D.mbrs.filter(function(mb){return getAv(mb.id,ch.id,y,m)[k];});
       if(!av.length){D.asgn[k][ch.id]=[];return;}
-      // 優先担当を先頭に
       var pri=ch.priority||[];
       av.sort(function(a,b){
-        var ap=pri.indexOf(a.id)>=0?0:1;
-        var bp=pri.indexOf(b.id)>=0?0:1;
+        var ap=pri.indexOf(a.id)>=0?0:1;var bp=pri.indexOf(b.id)>=0?0:1;
         if(ap!==bp)return ap-bp;
         return (cnt[a.id]||0)-(cnt[b.id]||0);
       });
       var pick=av.slice(0,ch.need).map(function(p){return p.id;});
-      D.asgn[k][ch.id]=pick;
-      pick.forEach(function(id){cnt[id]=(cnt[id]||0)+1;});
+      D.asgn[k][ch.id]=pick;pick.forEach(function(id){cnt[id]=(cnt[id]||0)+1;});
     });
   }
   syncAsgn().then(function(){saveLocal();});
@@ -598,14 +616,12 @@ function autoA(){
 function getShortages(){
   var res=[],y=D.cy,m=D.cmo,days=dim(y,m),today=new Date();today.setHours(0,0,0,0);
   for(var d=1;d<=days;d++){
-    var dt=new Date(y,m,d),diff=Math.round((dt-today)/86400000);
-    if(diff<0)continue;
+    var dt=new Date(y,m,d),diff=Math.round((dt-today)/86400000);if(diff<0)continue;
     var k=dky(y,m,d);
     D.chrs.forEach(function(ch){if(isCD(ch,y,m,d)&&((D.asgn[k]&&D.asgn[k][ch.id])||[]).length<ch.need)res.push({date:(m+1)+'/'+d,diff:diff,chore:ch.name});});
   }
   return res;
 }
-
 function checkNotify(){
   if(!D.ns.enabled)return;
   var s=getShortages().filter(function(x){return x.diff<=D.ns.days;});
@@ -613,23 +629,16 @@ function checkNotify(){
     new Notification('家事スケジューラー：人手不足あり',{body:s.length+'件の人手不足が'+D.ns.days+'日以内にあります',icon:'icons/icon-192.png'});
   }
 }
-
-// ===== 家事開始時刻タイマー =====
 function setupChoreTimers(){
-  choreTimers.forEach(function(t){clearTimeout(t);});
-  choreTimers=[];
+  choreTimers.forEach(function(t){clearTimeout(t);});choreTimers=[];
   if(!('Notification' in window)||Notification.permission!=='granted')return;
-  var todayStr=dkdt(new Date());
-  var da=D.asgn[todayStr]||{};
+  var todayStr=dkdt(new Date()),da=D.asgn[todayStr]||{};
   D.chrs.forEach(function(ch){
     if(!ch.notify_enabled||!ch.start_time)return;
-    var asgn=da[ch.id]||[];
-    if(!asgn.length)return;
-    var parts=ch.start_time.split(':');
-    var target=new Date();
+    var asgn=da[ch.id]||[];if(!asgn.length)return;
+    var parts=ch.start_time.split(':'),target=new Date();
     target.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
-    var diff=target-new Date();
-    if(diff<=0)return;
+    var diff=target-new Date();if(diff<=0)return;
     var t=setTimeout(function(){
       var names=asgn.map(function(id){var mb=D.mbrs.find(function(mb){return mb.id===id;});return mb?mb.name:'';}).filter(Boolean);
       new Notification('家事の時間です：'+ch.name,{body:'担当：'+names.join('・'),icon:'icons/icon-192.png'});
@@ -637,35 +646,25 @@ function setupChoreTimers(){
     choreTimers.push(t);
   });
 }
-
-// ===== 食事自動確定 =====
 function checkMealAuto(){
   if(!D.ns.mealAuto)return;
-  var todayStr=dkdt(new Date());
-  var changed=false;
+  var todayStr=dkdt(new Date()),changed=false;
+  var meals=activeMeals();
   D.mbrs.forEach(function(mb){
-    MEALS.forEach(function(ml){
-      var k=mkey(mb.id,todayStr,ml);
-      if((D.meals[k]||'undecided')==='undecided'){
-        D.meals[k]='need';
-        syncMeal(mb.id,todayStr,ml,'need');
-        changed=true;
-      }
+    meals.forEach(function(ml){
+      var k=mkey(mb.id,todayStr,ml.name);
+      if((D.meals[k]||'undecided')==='undecided'){D.meals[k]='need';syncMeal(mb.id,todayStr,ml.name,'need');changed=true;}
     });
   });
   if(changed){saveLocal();renderMeal();renderCal();}
 }
-
 function scheduleMealAuto(){
   if(!D.ns.mealAuto)return;
   var parts=(D.ns.mealAutoTime||'06:00').split(':');
-  var target=new Date();
-  target.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
-  var diff=target-new Date();
-  if(diff<0)diff+=86400000;
+  var target=new Date();target.setHours(parseInt(parts[0]),parseInt(parts[1]),0,0);
+  var diff=target-new Date();if(diff<0)diff+=86400000;
   setTimeout(function(){checkMealAuto();scheduleMealAuto();},diff);
 }
-
 function previewNotify(){
   var s=getShortages().filter(function(x){return x.diff<=D.ns.days;});
   var el=document.getElementById('nt-preview');
@@ -677,7 +676,6 @@ function previewNotify(){
     new Notification('人手不足のお知らせ',{body:s[0].date+' '+s[0].chore+' が人手不足です',icon:'icons/icon-192.png'});
   }
 }
-
 function reqPerm(){
   if(!('Notification' in window)){document.getElementById('nt-status').textContent='このブラウザは通知非対応です';return;}
   Notification.requestPermission().then(function(p){
@@ -686,7 +684,6 @@ function reqPerm(){
     else el.innerHTML='<span style="color:var(--cr)">通知がブロックされています</span>';
   });
 }
-
 function saveNS(){
   D.ns.enabled=document.getElementById('nt-enabled').checked;
   D.ns.days=parseInt(document.getElementById('nt-days').value)||3;
@@ -699,6 +696,9 @@ function saveNS(){
   D.ns.icRemind=parseInt(document.getElementById('ic-remind').value)||30;
   D.ns.mealAuto=document.getElementById('meal-auto').checked;
   D.ns.mealAutoTime=document.getElementById('meal-auto-time').value;
+  D.ns.mealShowLunch=document.getElementById('meal-show-lunch').checked;
+  D.ns.mealShowDinner=document.getElementById('meal-show-dinner').checked;
+  D.ns.availShowAny=document.getElementById('avail-show-any').checked;
   saveLocal();
 }
 
@@ -731,14 +731,12 @@ function generateIcs(mid){
   for(var d=1;d<=days;d++){
     var k=dky(y,m,d),da=D.asgn[k]||{};
     D.chrs.forEach(function(ch){
-      if(!isCD(ch,y,m,d))return;
-      if((da[ch.id]||[]).indexOf(mid)<0)return;
+      if(!isCD(ch,y,m,d))return;if((da[ch.id]||[]).indexOf(mid)<0)return;
       var dst=ch.start_time||D.ns.icStart||'07:00';
-      var den=D.ns.icEnd||'08:00';
       var ds=y+('0'+(m+1)).slice(-2)+('0'+d).slice(-2);
       lines.push('BEGIN:VEVENT','UID:'+ds+'-'+ch.id+'@fc',
         'DTSTART:'+ds+'T'+dst.replace(':','')+'00',
-        'DTEND:'+ds+'T'+den.replace(':','')+'00',
+        'DTEND:'+ds+'T'+en+'00',
         'SUMMARY:'+ch.name,'DESCRIPTION:担当：'+mb.name);
       if(remind>0){lines.push('BEGIN:VALARM','TRIGGER:-PT'+remind+'M','ACTION:DISPLAY','DESCRIPTION:'+ch.name+'の時間です','END:VALARM');}
       lines.push('END:VEVENT');
@@ -767,6 +765,7 @@ function renderCal(){
   leg+='<span class="leg-i"><span class="leg-d" style="background:#E24B4A"></span>人手不足</span>';
   document.getElementById('cal-leg').innerHTML=leg;
   var today=new Date();today.setHours(0,0,0,0);
+  var meals=activeMeals();
   var h='';
   for(var i=0;i<first;i++)h+='<div class="cd em"></div>';
   for(var d=1;d<=days;d++){
@@ -779,19 +778,20 @@ function renderCal(){
       var asgn=da[ch.id]||[],sh=asgn.length<ch.need;
       if(sh&&!isPast){tasks+='<div class="dt dt-sh">'+ch.name+'</div>';return;}
       if(sh&&isPast)return;
-      var dots='';asgn.forEach(function(mid){var mb=D.mbrs.find(function(mb){return mb.id===mid;});if(mb){var mc=gc(mb.color);dots+='<span style="width:4px;height:4px;border-radius:50%;background:'+mc.md+';display:inline-block;flex-shrink:0"></span>';}});
+      var dots='';
+      asgn.forEach(function(mid){var mb=D.mbrs.find(function(mb){return mb.id===mid;});if(mb){var mc=gc(mb.color);dots+='<span style="width:4px;height:4px;border-radius:50%;background:'+mc.md+';display:inline-block;flex-shrink:0"></span>';}});
       var fmc=asgn.length>0?(function(){var mb=D.mbrs.find(function(mb){return mb.id===asgn[0];});return mb?gc(mb.color):CL.gray;})():CL.gray;
       tasks+='<div class="dt" style="background:'+fmc.bg+';color:'+fmc.tx+'">'+dots+'<span style="flex:1;overflow:hidden;text-overflow:ellipsis">'+ch.name+'</span></div>';
     });
-    // 食事3段表示
+    // 食事3段表示（緑・赤2色）
     var mealHtml='<div class="meal-rows">';
-    MEALS.forEach(function(ml,mi){
-      var needM=D.mbrs.filter(function(mb){return mst(mb.id,k,ml)==='need';});
-      var skipM=D.mbrs.filter(function(mb){return mst(mb.id,k,ml)==='skip';});
-      if(needM.length||skipM.length){
-        mealHtml+='<div class="meal-row"><span class="meal-row-lbl">'+MEAL_LABELS[mi]+'</span>';
-        needM.forEach(function(mb){var mc=gc(mb.color);mealHtml+='<span class="meal-pip" style="background:'+mc.md+'" title="'+mb.name+' 必要"></span>';});
-        skipM.forEach(function(mb){mealHtml+='<span class="meal-pip" style="background:#E24B4A" title="'+mb.name+' 不要"></span>';});
+    meals.forEach(function(ml){
+      var needCnt=D.mbrs.filter(function(mb){return mst(mb.id,k,ml.name)==='need';}).length;
+      var skipCnt=D.mbrs.filter(function(mb){return mst(mb.id,k,ml.name)==='skip';}).length;
+      if(needCnt||skipCnt){
+        mealHtml+='<div class="meal-row"><span class="meal-row-lbl">'+ml.label+'</span>';
+        for(var ni=0;ni<needCnt;ni++)mealHtml+='<span class="meal-pip" style="background:#1D9E75"></span>';
+        for(var si=0;si<skipCnt;si++)mealHtml+='<span class="meal-pip" style="background:#E24B4A"></span>';
         mealHtml+='</div>';
       }
     });
@@ -801,8 +801,7 @@ function renderCal(){
   document.getElementById('cbody').innerHTML=h;
   var shorts=[];
   for(var d=1;d<=days;d++){
-    var k=dky(y,m,d),dt2=new Date(y,m,d);dt2.setHours(0,0,0,0);
-    if(dt2<today)continue;
+    var k=dky(y,m,d),dt2=new Date(y,m,d);dt2.setHours(0,0,0,0);if(dt2<today)continue;
     D.chrs.forEach(function(ch){if(isCD(ch,y,m,d)&&((D.asgn[k]&&D.asgn[k][ch.id])||[]).length<ch.need)shorts.push((m+1)+'/'+d+' '+ch.name);});
   }
   var upcoming=getShortages().filter(function(x){return x.diff<=D.ns.days;});
@@ -824,29 +823,36 @@ function renderMeal(){
   for(var i=0;i<7;i++){var r=new Date(ws);r.setDate(ws.getDate()+i);days.push(r);}
   var e=days[6];
   document.getElementById('mwlbl').textContent=(ws.getMonth()+1)+'/'+ws.getDate()+'〜'+(e.getMonth()+1)+'/'+e.getDate();
+  var meals=activeMeals();
+  if(!meals.length){document.getElementById('mgrid').innerHTML='<p style="font-size:13px;color:var(--tx2)">表示する食事がありません。通知設定から昼食・夕食を有効にしてください。</p>';document.getElementById('msum').innerHTML='';return;}
   var g='<div class="mg" style="grid-template-columns:62px repeat(7,minmax(0,1fr))">';
   g+='<div class="mgc mgh mgl"></div>';
-  days.forEach(function(dt){var it=now.toDateString()===dt.toDateString();g+='<div class="mgc mgh" style="'+(it?'background:var(--cgb);color:var(--cg)':'')+'">'+(dt.getMonth()+1)+'/'+dt.getDate()+'<br>'+DOW[dt.getDay()]+'</div>';});
-  MEALS.forEach(function(ml){
+  days.forEach(function(dt){var it=now.toDateString()===dt.toDateString();g+='<div class="mgc mgh" style="'+(it?'background:#E1F5EE;color:#085041':'')+'">'+(dt.getMonth()+1)+'/'+dt.getDate()+'<br>'+DOW[dt.getDay()]+'</div>';});
+  meals.forEach(function(ml){
     D.mbrs.forEach(function(mb,mi){
       var mc=gc(mb.color);
-      g+='<div class="mgc mgl" style="flex-direction:row;gap:3px">'+(mi===0?'<b style="font-size:9px;color:var(--tx)">'+ml+'</b>':'')+
+      g+='<div class="mgc mgl" style="flex-direction:row;gap:3px">'+(mi===0?'<b style="font-size:9px;color:var(--tx)">'+ml.name+'</b>':'')+
         '<div class="avi" style="width:14px;height:14px;background:'+mc.bg+';color:'+mc.tx+';font-size:8px;flex-shrink:0">'+mb.name[0]+'</div></div>';
-      days.forEach(function(dt){var ds=dkdt(dt),s=mst(mb.id,ds,ml);var lbl=s==='undecided'?'?':s==='need'?'○':'×';g+='<div class="mgc"><div class="mgb '+s+'" onclick="cyM(\''+mb.id+'\',\''+ds+'\',\''+ml+'\')">'+lbl+'</div></div>';});
+      days.forEach(function(dt){
+        var ds=dkdt(dt),s=mst(mb.id,ds,ml.name);
+        var lbl=s==='undecided'?'?':s==='need'?'○':'×';
+        var bg=s==='need'?'background:#E1F5EE;color:#085041;border-color:#5DCAA5':s==='skip'?'background:#FCEBEB;color:#791F1F;border-color:#F09595':'';
+        g+='<div class="mgc"><div class="mgb" style="'+bg+'" onclick="cyM(\''+mb.id+'\',\''+ds+'\',\''+ml.name+'\')">'+lbl+'</div></div>';
+      });
     });
     g+='<div style="background:var(--bde);grid-column:1/-1;height:1px"></div>';
   });
   g+='</div>';
   document.getElementById('mgrid').innerHTML=g;
   var sum='';
-  days.forEach(function(dt){var ds=dkdt(dt);MEALS.forEach(function(ml){
-    var need=D.mbrs.filter(function(mb){return mst(mb.id,ds,ml)==='need';});
-    var skip=D.mbrs.filter(function(mb){return mst(mb.id,ds,ml)==='skip';});
+  days.forEach(function(dt){var ds=dkdt(dt);meals.forEach(function(ml){
+    var need=D.mbrs.filter(function(mb){return mst(mb.id,ds,ml.name)==='need';});
+    var skip=D.mbrs.filter(function(mb){return mst(mb.id,ds,ml.name)==='skip';});
     if(need.length||skip.length){var it=now.toDateString()===dt.toDateString();
       sum+='<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:var(--bd);font-size:12px">'+
-        '<span style="min-width:78px;font-weight:600;color:'+(it?'var(--ctm)':'var(--tx)')+'">'+(dt.getMonth()+1)+'/'+dt.getDate()+' '+ml+'</span>'+
-        (need.length?'<span class="bdg" style="background:var(--cgb);color:var(--cg)">'+need.map(function(m){return m.name;}).join('・')+' 必要</span>':'')+
-        (skip.length?'<span class="bdg" style="background:var(--crb);color:var(--cr)">'+skip.map(function(m){return m.name;}).join('・')+' 不要</span>':'')+
+        '<span style="min-width:78px;font-weight:600;color:'+(it?'var(--ctm)':'var(--tx)')+'">'+(dt.getMonth()+1)+'/'+dt.getDate()+' '+ml.name+'</span>'+
+        (need.length?'<span class="bdg" style="background:#E1F5EE;color:#085041">'+need.map(function(m){return m.name;}).join('・')+' 必要</span>':'')+
+        (skip.length?'<span class="bdg" style="background:#FCEBEB;color:#791F1F">'+skip.map(function(m){return m.name;}).join('・')+' 不要</span>':'')+
         '</div>';}
   });});
   document.getElementById('msum').innerHTML=sum||'<p style="font-size:12px;color:var(--tx2)">この週の登録はまだありません</p>';
@@ -856,10 +862,20 @@ var pAv={};
 function renderAvail(){
   var y=D.ay,m=D.amo,days=dim(y,m);
   document.getElementById('avlbl').textContent=y+'年'+(m+1)+'月';
-  var tabs=[{id:ANY,name:'なんでも対応',color:'amber'}].concat(D.chrs);
-  var th='';tabs.forEach(function(ch){var col=gc(ch.color),on=D.avTab===ch.id;th+='<button class="itab'+(on?' on':'')+'" onclick="swAv(\''+ch.id+'\')" style="'+(on?'border-bottom-color:'+col.md+';color:'+col.tx:'')+'">'+ch.name+'</button>';});
+  // なんでも対応タブの表示制御
+  var tabs=[];
+  if(D.ns.availShowAny)tabs.push({id:ANY,name:'なんでも対応',color:'amber'});
+  tabs=tabs.concat(D.chrs);
+  // 現在のタブが存在しない場合は最初のタブに戻す
+  var tabIds=tabs.map(function(t){return t.id;});
+  if(tabIds.indexOf(D.avTab)<0)D.avTab=tabs.length>0?tabs[0].id:ANY;
+  var th='';
+  tabs.forEach(function(ch){var col=gc(ch.color),on=D.avTab===ch.id;th+='<button class="itab'+(on?' on':'')+'" onclick="swAv(\''+ch.id+'\')" style="'+(on?'border-bottom-color:'+col.md+';color:'+col.tx:'')+'">'+ch.name+'</button>';});
   document.getElementById('avtabs').innerHTML=th;
-  var cid=D.avTab,ch=tabs.find(function(c){return c.id===cid;})||tabs[0],col=gc(ch.color);
+  if(!tabs.length){document.getElementById('avcont').innerHTML='<p style="font-size:13px;color:var(--tx2)">家事がありません</p>';return;}
+  var cid=D.avTab;
+  var ch=tabs.find(function(c){return c.id===cid;})||tabs[0];
+  var col=gc(ch.color);
   var h='<div style="font-size:11px;padding:4px 8px;border-radius:6px;background:'+col.bg+';color:'+col.tx+';margin-bottom:8px">'+(cid===ANY?'全家事の空き候補として登録されます':'「'+ch.name+'」に対応できる日')+'</div>';
   D.mbrs.forEach(function(mb,i){
     var mc=gc(mb.color),ak=avk(mb.id,cid),cur={};
@@ -894,7 +910,8 @@ function oDay(k){
   var hc=false;
   D.chrs.forEach(function(ch){
     if(!isCD(ch,y,m,d))return;hc=true;
-    var ids=da[ch.id]||[],asgn=ids.map(function(id){var mb=D.mbrs.find(function(mb){return mb.id===id;});return mb?mb.name:'?';});
+    var ids=da[ch.id]||[];
+    var asgn=ids.map(function(id){var mb=D.mbrs.find(function(mb){return mb.id===id;});return mb?mb.name:'?';});
     var col=gc(ch.color),sh=ids.length<ch.need;
     var dots='';ids.forEach(function(mid){var mb=D.mbrs.find(function(mb){return mb.id===mid;});if(mb){var mc=gc(mb.color);dots+='<span style="width:8px;height:8px;border-radius:50%;background:'+mc.md+';display:inline-block;margin-right:2px"></span>';}});
     var timeStr=ch.start_time?'<span style="font-size:10px;color:var(--tx2);margin-left:4px">'+ch.start_time+'〜</span>':'';
@@ -904,16 +921,19 @@ function oDay(k){
       '</div>';
   });
   if(!hc)h+='<p style="font-size:13px;color:var(--tx2)">この日の家事はありません</p>';
-  h+='<div style="font-size:12px;font-weight:600;color:var(--tx2);margin:12px 0 6px">食事状況</div>';
-  MEALS.forEach(function(ml){
-    var need=D.mbrs.filter(function(mb){return mst(mb.id,k,ml)==='need';});
-    var skip=D.mbrs.filter(function(mb){return mst(mb.id,k,ml)==='skip';});
-    h+='<div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px"><span style="min-width:36px;color:var(--tx2)">'+ml+'</span>'+
-      (need.length?'<span class="bdg" style="background:var(--cgb);color:var(--cg)">'+need.map(function(m){return m.name;}).join('・')+' 必要</span>':'')+
-      (skip.length?'<span class="bdg" style="background:var(--crb);color:var(--cr)">'+skip.map(function(m){return m.name;}).join('・')+' 不要</span>':'')+
-      (!need.length&&!skip.length?'<span style="color:var(--tx3)">未登録</span>':'')+
-      '</div>';
-  });
+  var meals=activeMeals();
+  if(meals.length){
+    h+='<div style="font-size:12px;font-weight:600;color:var(--tx2);margin:12px 0 6px">食事状況</div>';
+    meals.forEach(function(ml){
+      var need=D.mbrs.filter(function(mb){return mst(mb.id,k,ml.name)==='need';});
+      var skip=D.mbrs.filter(function(mb){return mst(mb.id,k,ml.name)==='skip';});
+      h+='<div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px"><span style="min-width:36px;color:var(--tx2)">'+ml.name+'</span>'+
+        (need.length?'<span class="bdg" style="background:#E1F5EE;color:#085041">'+need.map(function(m){return m.name;}).join('・')+' 必要</span>':'')+
+        (skip.length?'<span class="bdg" style="background:#FCEBEB;color:#791F1F">'+skip.map(function(m){return m.name;}).join('・')+' 不要</span>':'')+
+        (!need.length&&!skip.length?'<span style="color:var(--tx3)">未登録</span>':'')+
+        '</div>';
+    });
+  }
   document.getElementById('dcont').innerHTML=h;
   document.getElementById('o-day').classList.add('on');
 }
@@ -937,9 +957,15 @@ function oMan(){
 function tgMan(cid,mid,el,color){var arr=mSt.sel[cid]||[],idx=arr.indexOf(mid),mc=gc(color);if(idx>=0){arr.splice(idx,1);el.classList.remove('on');el.style='';}else{arr.push(mid);el.classList.add('on');el.style='background:'+mc.bg+';color:'+mc.tx+';border-color:'+mc.md;}mSt.sel[cid]=arr;}
 function sMan(){if(!D.asgn[mSt.k])D.asgn[mSt.k]={};Object.keys(mSt.sel).forEach(function(cid){D.asgn[mSt.k][cid]=mSt.sel[cid];});syncAsgn().then(function(){saveLocal();});cls();renderCal();}
 
+// 曜日ボタン（チェックボックスではなくボタン形式に変更）
 function toggleDow(){
   var freq=document.getElementById('cfreq').value;
   document.getElementById('dow-wrap').style.display=freq==='custom'?'block':'none';
+}
+function tgDow(dw,el){
+  var idx=selDays.indexOf(dw);
+  if(idx>=0){selDays.splice(idx,1);el.classList.remove('on');}
+  else{selDays.push(dw);el.classList.add('on');}
 }
 function toggleChNotify(){
   var on=document.getElementById('ch-notify').checked;
@@ -969,10 +995,19 @@ function renderChore(){
   });
   document.getElementById('chorelist').innerHTML=h;
 }
-function delC(id){D.chrs=D.chrs.filter(function(c){return c.id!==id;});delChoreDB(id);saveLocal();renderChore();}
+
+function delC(id){
+  // ローカルから削除
+  D.chrs=D.chrs.filter(function(c){return c.id!==id;});
+  // Supabaseから削除
+  deleteChoreDB(id).then(function(){saveLocal();renderChore();renderCal();renderAvail();});
+  if(!sb){saveLocal();renderChore();renderCal();renderAvail();}
+}
 
 function oCM(id){
-  D.selFix=[];D.selPri=[];D.selCol='purple';
+  D.selFix=[];D.selPri=[];D.selCol='purple';selDays=[];
+  // 全曜日ボタンをリセット
+  document.querySelectorAll('.dow-btn').forEach(function(el){el.classList.remove('on');});
   if(id){
     var ch=D.chrs.find(function(c){return c.id===id;});
     if(!ch)return;
@@ -984,8 +1019,11 @@ function oCM(id){
     D.selFix=(ch.fixed||[]).slice();
     D.selPri=(ch.priority||[]).slice();
     D.selCol=ch.color;
-    var days=(ch.active_days||[]).map(function(x){return parseInt(x);});
-    document.querySelectorAll('.dow-chk').forEach(function(cb){cb.checked=days.indexOf(parseInt(cb.value))>=0;});
+    selDays=(ch.active_days||[]).map(function(x){return parseInt(x);});
+    // 曜日ボタンに反映
+    document.querySelectorAll('.dow-btn').forEach(function(el){
+      if(selDays.indexOf(parseInt(el.dataset.dow))>=0)el.classList.add('on');
+    });
     document.getElementById('dow-wrap').style.display=ch.freq==='custom'?'block':'none';
     var ne=ch.notify_enabled||false;
     document.getElementById('ch-notify').checked=ne;
@@ -997,7 +1035,8 @@ function oCM(id){
     document.getElementById('cname').value='';
     document.getElementById('cfreq').value='daily';
     document.getElementById('cneed').value=1;
-    document.querySelectorAll('.dow-chk').forEach(function(cb){cb.checked=true;});
+    selDays=[0,1,2,3,4,5,6];
+    document.querySelectorAll('.dow-btn').forEach(function(el){el.classList.add('on');});
     document.getElementById('dow-wrap').style.display='none';
     document.getElementById('ch-notify').checked=false;
     document.getElementById('ch-time-wrap').style.display='none';
@@ -1016,7 +1055,7 @@ function tgFix(mid,el,color){var idx=D.selFix.indexOf(mid),mc=gc(color);if(idx>=
 
 function rPri(){
   var h='';
-  D.mbrs.forEach(function(mb){var sel=D.selPri.indexOf(mb.id)>=0,mc=gc(mb.color);h+='<span class="pri-chip'+(sel?' on':'')+'" style="'+(sel?'background:'+mc.bg+';color:'+mc.tx+';border-color:'+mc.md:'')+'" onclick="tgPri(\''+mb.id+'\',this,\''+mb.color+'\')">'+mb.name+'</span>';});
+  D.mbrs.forEach(function(mb){var sel=D.selPri.indexOf(mb.id)>=0,mc=gc(mb.color);h+='<span class="chip'+(sel?' on':'')+'" style="'+(sel?'background:'+mc.bg+';color:'+mc.tx+';border-color:'+mc.md:'')+'" onclick="tgPri(\''+mb.id+'\',this,\''+mb.color+'\')">'+mb.name+'</span>';});
   document.getElementById('pchips').innerHTML=h;
 }
 function tgPri(mid,el,color){var idx=D.selPri.indexOf(mid),mc=gc(color);if(idx>=0){D.selPri.splice(idx,1);el.classList.remove('on');el.style='';}else{D.selPri.push(mid);el.classList.add('on');el.style='background:'+mc.bg+';color:'+mc.tx+';border-color:'+mc.md;}}
@@ -1027,8 +1066,6 @@ document.querySelectorAll('.co').forEach(function(el){el.addEventListener('click
 function saveC(){
   var id=document.getElementById('eid').value;
   var freq=document.getElementById('cfreq').value;
-  var days=[];
-  document.querySelectorAll('.dow-chk').forEach(function(cb){if(cb.checked)days.push(parseInt(cb.value));});
   var ne=document.getElementById('ch-notify').checked;
   var st=document.getElementById('ch-start-time').value;
   var ch={
@@ -1039,14 +1076,14 @@ function saveC(){
     fixed:D.selFix.slice(),
     priority:D.selPri.slice(),
     color:D.selCol,
-    active_days:freq==='custom'?days:[0,1,2,3,4,5,6],
+    active_days:freq==='custom'?selDays.slice():[0,1,2,3,4,5,6],
     start_time:ne?st:'',
     notify_enabled:ne
   };
   if(id){var i=D.chrs.findIndex(function(c){return c.id===id;});if(i>=0)D.chrs[i]=ch;}
   else D.chrs.push(ch);
   syncChore(ch).then(function(){saveLocal();setupChoreTimers();});
-  cls();renderChore();
+  cls();renderChore();renderAvail();
 }
 
 function renderMbr(){
@@ -1112,7 +1149,7 @@ window.addEventListener('load',function(){
     s.onload=ready;
     s.onerror=function(){setSS('err','SDK読込失敗');ready();};
     document.head.appendChild(s);
-  } else {ready();}
+  } else{ready();}
 
   if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
 });
