@@ -351,7 +351,18 @@ input:focus,select:focus{outline:none;border-color:var(--c-primary)}
   <input type="hidden" id="eid">
   <div class="fg"><label>家事名</label><input id="cname"></div>
   <div class="fg"><label>頻度</label>
-    <select id="cfreq"><option value="daily">毎日</option><option value="weekday">平日のみ</option><option value="weekend">週末のみ</option><option value="weekly">週1（月）</option></select></div>
+    <select id="cfreq" onchange="toggleDow()"><option value="daily">毎日</option><option value="weekday">平日のみ</option><option value="weekend">週末のみ</option><option value="custom">曜日を選ぶ</option></select></div>
+  <div class="fg" id="dow-wrap" style="display:none"><label>実施する曜日</label>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" class="dow-chk" value="0" style="width:16px;height:16px">日</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" class="dow-chk" value="1" style="width:16px;height:16px">月</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" class="dow-chk" value="2" style="width:16px;height:16px">火</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" class="dow-chk" value="3" style="width:16px;height:16px">水</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" class="dow-chk" value="4" style="width:16px;height:16px">木</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" class="dow-chk" value="5" style="width:16px;height:16px">金</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" class="dow-chk" value="6" style="width:16px;height:16px">土</label>
+    </div>
+  </div>
   <div class="fg"><label>必要人数</label><input id="cneed" type="number" min="1" max="5" value="1"></div>
   <div class="fg"><label>固定担当</label><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px" id="fchips"></div></div>
   <div class="fg"><label>カラー</label><div style="margin-top:4px" id="ccopts">
@@ -494,7 +505,7 @@ async function loadAll(){
       sb.from('meals').select('*')
     ]);
     if(res[0].data&&res[0].data.length)D.mbrs=res[0].data;
-    if(res[1].data&&res[1].data.length)D.chrs=res[1].data.map(function(c){return Object.assign({},c,{fixed:c.fixed_members||[]});});
+    if(res[1].data&&res[1].data.length)D.chrs=res[1].data.map(function(c){return Object.assign({},c,{fixed:c.fixed_members||[],priority:c.priority_members||[],active_days:c.active_days||[0,1,2,3,4,5,6]});});
     D.avail={};
     (res[2].data||[]).forEach(function(r){D.avail[r.avail_key]=r.dates||[];});
     D.asgn={};
@@ -516,7 +527,18 @@ async function syncMember(mb){
 }
 async function syncChore(ch){
   if(!sb)return;
-  await sb.from('chores').upsert(Object.assign({},ch,{fixed_members:ch.fixed}));
+  await sb.from('chores').upsert({
+    id:ch.id,
+    name:ch.name,
+    freq:ch.freq,
+    need:ch.need,
+    fixed_members:ch.fixed||[],
+    priority_members:ch.priority||[],
+    color:ch.color,
+    active_days:ch.active_days||[0,1,2,3,4,5,6],
+    start_time:ch.start_time||'',
+    notify_enabled:ch.notify_enabled||false
+  });
 }
 async function syncAvail(){
   if(!sb)return;
@@ -581,6 +603,10 @@ function getAv(mid,cid,y,m){
 }
 function isCD(ch,y,m,d){
   var dw=new Date(y,m,d).getDay();
+  if(ch.freq==='custom'){
+    var days=(ch.active_days||[]).map(function(x){return parseInt(x);});
+    return days.indexOf(dw)>=0;
+  }
   if(ch.freq==='daily')return true;
   if(ch.freq==='weekday')return dw>=1&&dw<=5;
   if(ch.freq==='weekend')return dw===0||dw===6;
@@ -881,14 +907,20 @@ function delC(id){D.chrs=D.chrs.filter(function(c){return c.id!==id;});delChore(
 function oCM(id){
   D.selFix=[];D.selCol='purple';
   if(id){var ch=D.chrs.find(function(c){return c.id===id;});document.getElementById('cmtit').textContent='家事を編集';document.getElementById('eid').value=id;document.getElementById('cname').value=ch.name;document.getElementById('cfreq').value=ch.freq;document.getElementById('cneed').value=ch.need;D.selFix=(ch.fixed||[]).slice();D.selCol=ch.color;}
-  else{document.getElementById('cmtit').textContent='家事を追加';document.getElementById('eid').value='';document.getElementById('cname').value='';document.getElementById('cfreq').value='daily';document.getElementById('cneed').value=1;}
+  else{document.getElementById('cmtit').textContent='家事を追加';document.getElementById('eid').value='';document.getElementById('cname').value='';document.getElementById('cfreq').value='daily';document.getElementById('cneed').value=1;document.querySelectorAll('.dow-chk').forEach(function(cb){cb.checked=true;});}
+  if(id){var ch2=D.chrs.find(function(c){return c.id===id;});if(ch2){var days=ch2.active_days||[0,1,2,3,4,5,6];document.querySelectorAll('.dow-chk').forEach(function(cb){cb.checked=days.indexOf(parseInt(cb.value))>=0;});if(ch2.freq==='custom')document.getElementById('dow-wrap').style.display='block';else document.getElementById('dow-wrap').style.display='none';}}
   rFix();uCol();document.getElementById('o-cm').classList.add('on');
+}
+function toggleDow(){
+  var freq=document.getElementById('cfreq').value;
+  document.getElementById('dow-wrap').style.display=freq==='custom'?'block':'none';
 }
 function rFix(){var h='';D.mbrs.forEach(function(mb){var sel=D.selFix.indexOf(mb.id)>=0,mc=gc(mb.color);h+='<span class="chip'+(sel?' on':'')+'" style="'+(sel?'background:'+mc.bg+';color:'+mc.tx+';border-color:'+mc.md:'')+'" onclick="tgFix(\''+mb.id+'\',this,\''+mb.color+'\')">'+mb.name+'</span>';});document.getElementById('fchips').innerHTML=h;}
 function tgFix(mid,el,color){var idx=D.selFix.indexOf(mid),mc=gc(color);if(idx>=0){D.selFix.splice(idx,1);el.classList.remove('on');el.style='';}else{D.selFix.push(mid);el.classList.add('on');el.style='background:'+mc.bg+';color:'+mc.tx+';border-color:'+mc.md;}}
+function saveC(){var id=document.getElementById('eid').value;var days=[];document.querySelectorAll('.dow-chk').forEach(function(cb){if(cb.checked)days.push(cb.value);});var ch={id:id||('c'+Date.now()),name:document.getElementById('cname').value||'新しい家事',freq:document.getElementById('cfreq').value,need:parseInt(document.getElementById('cneed').value)||1,fixed:D.selFix.slice(),color:D.selCol,active_days:days};
 function uCol(){document.querySelectorAll('.co').forEach(function(el){el.style.borderColor=el.dataset.c===D.selCol?'var(--text)':'transparent';});}
 document.querySelectorAll('.co').forEach(function(el){el.addEventListener('click',function(){D.selCol=el.dataset.c;uCol();});});
-function saveC(){var id=document.getElementById('eid').value;var ch={id:id||('c'+Date.now()),name:document.getElementById('cname').value||'新しい家事',freq:document.getElementById('cfreq').value,need:parseInt(document.getElementById('cneed').value)||1,fixed:D.selFix.slice(),color:D.selCol};if(id){var i=D.chrs.findIndex(function(c){return c.id===id;});if(i>=0)D.chrs[i]=ch;}else D.chrs.push(ch);syncChore(ch).then(function(){saveLocal();});cls();renderChore();}
+if(id){var i=D.chrs.findIndex(function(c){return c.id===id;});if(i>=0)D.chrs[i]=ch;}else D.chrs.push(ch);syncChore(ch).then(function(){saveLocal();});cls();renderChore();}
 
 // ===== メンバー =====
 function renderMbr(){
